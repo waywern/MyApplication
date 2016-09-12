@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mNextButton;
+    private Button mPreviouseButton;
     private TextView mQuestionTextView;
     private TrueFalse[] mQuestionBank = new TrueFalse[] {
                     new TrueFalse(R.string.question_oceans, true),
@@ -50,10 +51,22 @@ import android.support.v7.app.AppCompatActivity;
             mNextButton.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View v){
-                            mCurrentIndex = (mCurrentIndex  - 1) % mQuestionBank.length;
+                            mCurrentIndex = (mCurrentIndex  + 1) % mQuestionBank.length;
                             updatequestion();
                         }
                 });
+            mPreviouseButton  = (Button)findViewById(R.id.previouse_button);
+            mPreviouseButton.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    if(mCurrentIndex == 0)
+                        mCurrentIndex = mQuestionBank.length-1;
+                    else
+                        mCurrentIndex = mCurrentIndex  - 1;
+                    updatequestion();
+                }
+            });
+
         }
     public void updatequestion()
     {
