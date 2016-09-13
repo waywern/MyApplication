@@ -1,6 +1,9 @@
 package com.waywern.myapplication;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
     import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +18,7 @@ import android.view.View;
     private Button mNextButton;
     private Button mPreviouseButton;
     private Button mCheatButton;
+    private TextView mVersion;
     private boolean mIsCheater;
     private TextView mQuestionTextView;
     private TrueFalse[] mQuestionBank = new TrueFalse[] {
@@ -27,11 +31,23 @@ import android.view.View;
     private int mCurrentIndex = 0;
     private String TAG = "MainActivity";
 
+    //Method of protection
+    @TargetApi(11)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_main);
+
+        //Method of protection
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar actionBar = getActionBar();
+            //Some of the reason ERROR on this row
+            //actionBar.setSubtitle("Bodies of Water");
+        }
+
+        mVersion = (TextView) findViewById(R.id.version);
+        mVersion.setText(Integer.toString(Build.VERSION.SDK_INT));
 
         mTrueButton = (Button)findViewById(R.id.true_button);
 
