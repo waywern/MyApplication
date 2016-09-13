@@ -1,5 +1,6 @@
 package com.waywern.myapplication;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
     import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.view.View;
     private Button mFalseButton;
     private Button mNextButton;
     private Button mPreviouseButton;
+    private Button mCheatButton;
+    private boolean mIsCheater;
     private TextView mQuestionTextView;
     private TrueFalse[] mQuestionBank = new TrueFalse[] {
                     new TrueFalse(R.string.question_oceans, true),
@@ -24,7 +27,7 @@ import android.view.View;
     private int mCurrentIndex = 0;
     private String TAG = "MainActivity";
 
-            @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate(Bundle) called");
@@ -54,6 +57,7 @@ import android.view.View;
         mNextButton.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v){
+                        mIsCheater = false;
                         mCurrentIndex = (mCurrentIndex  + 1) % mQuestionBank.length;
                         updatequestion();
                     }
@@ -62,11 +66,24 @@ import android.view.View;
         mPreviouseButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                mIsCheater = false;
                 if(mCurrentIndex == 0)
                     mCurrentIndex = mQuestionBank.length-1;
                 else
                     mCurrentIndex = mCurrentIndex  - 1;
                 updatequestion();
+            }
+        });
+
+        mCheatButton = (Button)findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent i = new Intent(MainActivity.this, CheatActivity.class);
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswer();
+                i.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, answerIsTrue);
+                //startActivity(i);
+                startActivityForResult(i, 0);
             }
         });
     }
@@ -98,6 +115,14 @@ import android.view.View;
         Log.d(TAG, "onDestroy() called");
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null) {
+            return;
+        }
+        mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+    }
+
     public void updatequestion() {
         int question = mQuestionBank[mCurrentIndex].getQuestion();
         mQuestionTextView.setText(question);
@@ -105,10 +130,14 @@ import android.view.View;
     public void checkAnswer(boolean answer)
     {
         int pointer_to_text;
-        if(answer == mQuestionBank[mCurrentIndex].isAnswer())
+        if (mIsCheater) {
+            pointer_to_text = R.string.judgment_suggestion;
+        } else {
+            if (answer == mQuestionBank[mCurrentIndex].isAnswer())
                 pointer_to_text = R.string.correct_toast;
-        else
-            pointer_to_text = R.string.incorrect_toast;
+            else
+                pointer_to_text = R.string.incorrect_toast;
+        }
         Toast.makeText(MainActivity.this, pointer_to_text, Toast.LENGTH_SHORT).show();
     }
 }
