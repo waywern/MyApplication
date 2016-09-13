@@ -39,5 +39,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cheat_button" />
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/version"/>
 </LinearLayout>
